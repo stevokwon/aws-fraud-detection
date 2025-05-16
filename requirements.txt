@@ -1,0 +1,9 @@
+boto3
+pandas
+scikit-learn
+psutil==5.9.5 
+xgboost==1.7.6
+matplotlib
+jupyter
+awscli
+kaggle
