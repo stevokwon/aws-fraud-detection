@@ -172,5 +172,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-data/raw/creditcard.csv
-data/raw/creditcardfraud.zip
+notebooks/data/
