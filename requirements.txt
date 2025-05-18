@@ -8,3 +8,5 @@ jupyter
 awscli
 kaggle
 seaborn
+lightGBM
+imblearn
