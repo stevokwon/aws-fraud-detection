@@ -19,6 +19,7 @@ S3_BUCKET = 'fraud-batch-pipeline-stevo'
 S3_INPUT_KEY = 'incoming/transactions.csv'
 S3_OUTPUT_KEY = 'flagged/output_flagged_transactions.csv'
 MODEL_PATH = '../models/lightgbm_model.pkl'
+FEATURE_PATH = '../models/expected_features.pkl'
 THRESHOLD = 0.50 
 
 # --------------------------------------------
@@ -50,6 +51,13 @@ columns_to_drop = [col for col in df_new.columns if any(substr in col for substr
 df_new = df_new.drop(columns=columns_to_drop, errors='ignore')
 
 # --------------------------------------------
+# Align features with the training dataset
+# --------------------------------------------
+expected_features = joblib.load(FEATURE_PATH)
+df_new = df_new.reindex(columns = expected_features, fill_value = 0)
+logger.info(f"🔄 Aligned features to expected model input with shape: {df_new.shape}")
+
+# --------------------------------------------
 # Load the model and score
 # --------------------------------------------
 model = joblib.load(MODEL_PATH)
@@ -65,7 +73,7 @@ results['predicted_label'] = y_pred
 
 csv_buffer = StringIO()
 results.to_csv(csv_buffer, index = False)
-s3.put_object(Bucket = S3_BUCKET, Key = S3_OUTPUT_KEY, Body = csv_buffer.get_value())
+s3.put_object(Bucket = S3_BUCKET, Key = S3_OUTPUT_KEY, Body = csv_buffer.getvalue())
 logger.info(f"✅ Scored results saved to s3://{S3_BUCKET}/{S3_OUTPUT_KEY}")
 
 # --------------------------------------------
