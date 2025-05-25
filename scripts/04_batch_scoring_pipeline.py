@@ -18,8 +18,8 @@ from io import StringIO
 S3_BUCKET = 'fraud-batch-pipeline-stevo'
 S3_INPUT_KEY = 'incoming/transactions.csv'
 S3_OUTPUT_KEY = 'flagged/output_flagged_transactions.csv'
-MODEL_PATH = '../models/lightgbm_model.pkl'
-FEATURE_PATH = '../models/expected_features.pkl'
+MODEL_PATH = 'models/lightgbm_model.pkl'
+FEATURE_PATH = 'models/expected_features.pkl'
 THRESHOLD = 0.50 
 
 # --------------------------------------------
@@ -94,6 +94,7 @@ def run_batch_scoring():
 
     os.makedirs("metadata", exist_ok=True)
     pd.DataFrame([metadata]).to_csv("metadata/scoring_metadata.csv", index=False)
+    results.to_csv('metadata/scoring_results.csv', index = False)
     logger.info("📝 Metadata saved to metadata/scoring_metadata.csv")
 
 if __name__ == '__main__':
