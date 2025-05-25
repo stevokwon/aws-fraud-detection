@@ -10,6 +10,7 @@ import pandas as pd
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator, ShortCircuitOperator
+from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 
 from scripts.04_batch_scoring_pipeline import run_batch_scoring
 
@@ -92,3 +93,19 @@ with DAG(
         task_id = 'run_batch_scoring',
         python_callable = run_batch_scoring
     )
+
+    top_k_upload = PythonOperator(
+        task_id = 'upload_top_k_frauds'
+        python_callable = upload_top_k
+    )
+
+    fraud_alert_branch = BranchPythonOperator(
+        task_id = 'branch_on_fraud_rate',
+        python_callable = is_fraud_rate_high
+    )
+
+    high_fraud_alert = SlackWebhookOperator(
+        
+    )
+
+
