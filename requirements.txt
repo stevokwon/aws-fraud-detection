@@ -10,3 +10,4 @@ kaggle
 seaborn
 lightGBM
 imblearn
+apache-airflow
