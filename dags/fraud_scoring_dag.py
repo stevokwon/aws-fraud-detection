@@ -9,12 +9,18 @@ import pandas as pd
 
 from airflow import DAG
 from airflow.utils.dates import days_ago
-from airflow.operators.python_operator import PythonOperator, BranchPythonOperator, ShortCircuitOperator
+from airflow.operators.python import PythonOperator, BranchPythonOperator, ShortCircuitOperator
 from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
-from airflow.operators.email_operator import EmailOperator
+from airflow.operators.email import EmailOperator
 from airflow.utils.trigger_rule import TriggerRule
 
-from scripts.04_batch_scoring_pipeline import run_batch_scoring
+import os
+import sys
+
+# Add the /workspaces/aws-fraud-detection/scripts folder to the path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
+
+from batch_scoring_pipeline import run_batch_scoring
 
 # ---------------------------
 # Default Configuration
@@ -97,7 +103,7 @@ with DAG(
     )
 
     top_k_upload = PythonOperator(
-        task_id = 'upload_top_k_frauds'
+        task_id = 'upload_top_k_frauds',
         python_callable = upload_top_k
     )
 
@@ -108,7 +114,7 @@ with DAG(
 
     high_fraud_alert = SlackWebhookOperator(
         task_id = 'send_high_fraud_alert',
-        http_conn_id = 'slack_conn',
+        slack_webhook_conn_id = 'slack_conn',
         message = "🚨 High fraud rate detected in today's batch scoring! Please review.",
         trigger_rule = TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS
     )
@@ -119,26 +125,30 @@ with DAG(
     )
 
     email_notify = EmailOperator(
-        task_id='notify_success',
-        to='alerts@risk-team.com',
-        subject='[Airflow] ✅ Fraud Batch Scoring Succeeded',
-        html_content='Fraud scoring pipeline completed successfully.',
+        task_id = 'notify_success',
+        to = 'alerts@risk-team.com',
+        subject = '[Airflow] ✅ Fraud Batch Scoring Succeeded',
+        html_content = 'Fraud scoring pipeline completed successfully.',
         trigger_rule=TriggerRule.ALL_SUCCESS
     )
 
     slack_success = SlackWebhookOperator(
-        task_id='slack_success_alert',
-        http_conn_id='slack_conn',
-        message='✅ Fraud scoring DAG completed successfully on {{ ds }}.',
-        trigger_rule=TriggerRule.ALL_SUCCESS
+        task_id = 'slack_success_alert',
+        slack_webhook_conn_id = 'slack_conn',
+        message = '✅ Fraud scoring DAG completed successfully on {{ ds }}.',
+        trigger_rule = TriggerRule.ALL_SUCCESS
     )
 
     cleanup = PythonOperator(
-        task_id='cleanup_metadata',
-        python_callable=cleanup_metadata,
-        trigger_rule=TriggerRule.ALL_DONE
+        task_id = 'cleanup_metadata',
+        python_callable = cleanup_metadata,
+        trigger_rule = TriggerRule.ALL_DONE
     )
 
     # DAG workflow
-    check_input >> run_batch >> top_k_upload >> fraud_alert_branch
-    fraud_alert_branch >> [high_fraud_alert, no_alert_needed] >> [email_notify, slack_success] >> cleanup
+    fraud_alert_branch >> [high_fraud_alert, no_alert_needed]
+
+    high_fraud_alert >> [email_notify, slack_success]
+    no_alert_needed >> [email_notify, slack_success]
+
+    [email_notify, slack_success] >> cleanup
