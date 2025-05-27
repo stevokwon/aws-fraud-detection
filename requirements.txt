@@ -10,4 +10,8 @@ kaggle
 seaborn
 lightGBM
 imblearn
-apache-airflow
+apache-airflow==2.8.1
+apache-airflow-providers-amazon
+apache-airflow-providers-slack
+apache-airflow-providers-postgres
+apache-airflow-providers-redis
