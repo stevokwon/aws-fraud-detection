@@ -1,7 +1,9 @@
-# Base image
 FROM python:3.11-slim
 
-# Install required system libraries
+# Set workdir
+WORKDIR /workspace
+
+# OS-level dependencies for xmlsec, Airflow, etc.
 RUN apt-get update && apt-get install -y \
     gcc \
     libxml2-dev \
@@ -10,16 +12,12 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     libssl-dev \
     git \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create user vscode to avoid "no matching entries in passwd file"
-RUN useradd -m vscode
+# Copy Airflow webserver config
+COPY airflow/webserver_config.py /root/airflow/webserver_config.py
 
-# Set working directory
-WORKDIR /workspace
-
-# Copy requirements file from local context
+# Copy and install requirements
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --upgrade pip && pip install -r requirements.txt
