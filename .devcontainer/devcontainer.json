@@ -1,8 +1,10 @@
 {
   "name": "airflow-dev",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "context": ".."
   },
+  "features": {},
   "customizations": {
     "vscode": {
       "extensions": [
@@ -11,7 +13,7 @@
       ]
     }
   },
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
   "runArgs": ["--env-file", ".env"],
-  "remoteUser": "vscode",
-  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt"
+  "remoteUser": "root"
 }
