@@ -1,19 +1,21 @@
 {
-  "name": "Airflow Dev",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-azuretools.vscode-docker",
-        "batisteo.vscode-django"
-      ]
-    }
-  },
-  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
-  "forwardPorts": [8080, 8793, 8794],
-  "remoteUser": "vscode"
+    "name": "airflow-dev",
+    "image": "python:3.11-slim",
+    "features": {},
+    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-azuretools.vscode-docker"
+            ],
+            "settings": {
+                "python.envFile": "${workspaceFolder}/.env"
+            }
+        }
+    },
+    "runArgs": [
+        "--env-file", ".env"
+    ],
+    "remoteUser": "vscode"
 }
