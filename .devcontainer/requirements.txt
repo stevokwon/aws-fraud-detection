@@ -8,6 +8,10 @@ kaggle
 seaborn
 lightGBM
 imblearn
-apache-airflow[celery,postgres,redis,amazon,slack]==2.8.1
-pandas
+apache-airflow==2.8.1
 boto3
+pandas
+xmlsec
+slack-sdk
+apache-airflow-providers-slack
+apache-airflow-providers-amazon
