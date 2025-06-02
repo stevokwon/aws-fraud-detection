@@ -1,27 +1,19 @@
 FROM python:3.11-slim
 
-# Install OS dependencies
+# Install required system packages
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
     git \
-    libpq-dev \
-    default-libmysqlclient-dev \
-    libsasl2-dev \
-    libldap2-dev \
-    python3-dev \
     gcc \
     g++ \
-    libffi-dev \
+    libpq-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    xmlsec1 \
     libssl-dev \
-    graphviz \
- && rm -rf /var/lib/apt/lists/*
+    libffi-dev \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /workspace
-
-# Copy in environment requirements
-COPY requirements.txt .
-
-# Pre-install requirements (postCreateCommand will ensure reinstallation in container context)
-RUN pip install --upgrade pip && pip install -r requirements.txt
+WORKDIR /workspaces/aws-fraud-detection
