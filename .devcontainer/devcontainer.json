@@ -1,21 +1,17 @@
 {
-    "name": "airflow-dev",
-    "image": "python:3.11-slim",
-    "features": {},
-    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "ms-azuretools.vscode-docker"
-            ],
-            "settings": {
-                "python.envFile": "${workspaceFolder}/.env"
-            }
-        }
-    },
-    "runArgs": [
-        "--env-file", ".env"
-    ],
-    "remoteUser": "vscode"
+  "name": "airflow-dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "runArgs": ["--env-file", ".env"],
+  "remoteUser": "vscode",
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt"
 }
