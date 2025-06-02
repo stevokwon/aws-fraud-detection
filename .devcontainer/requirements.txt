@@ -15,4 +15,4 @@ xmlsec
 slack-sdk
 apache-airflow-providers-slack
 apache-airflow-providers-amazon
-Flask-Session
+flask-session
