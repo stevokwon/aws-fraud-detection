@@ -1,18 +1,24 @@
-scikit-learn
-psutil==5.9.5 
-xgboost==1.7.6
-matplotlib
-jupyter
-awscli
-kaggle
-seaborn
-lightGBM
-imblearn
+# Core AWS & Airflow
 apache-airflow==2.8.1
-boto3
-pandas
-xmlsec
-slack-sdk
-apache-airflow-providers-slack
 apache-airflow-providers-amazon
+apache-airflow-providers-slack
+
+# AWS CLI / SDK
+boto3
+awscli
+
+# Flask session support (for Airflow web UI)
 flask-session
+
+# ML / DS Libraries
+pandas
+scikit-learn
+xgboost==1.7.6
+lightgbm
+seaborn
+matplotlib
+imblearn
+
+# Misc
+kaggle
+xmlsec

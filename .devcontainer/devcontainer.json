@@ -1,16 +1,25 @@
 {
-  "name": "aws-fraud-detection",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".devcontainer"
-  },
-  "postCreateCommand": "airflow db init && airflow users create -u admin -p admin -f admin -l user -r Admin -e admin@example.com",
+  "name": "AWS Fraud Detection Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",  // Base image
+
+  "postCreateCommand": "pip install --upgrade pip && pip install -r .devcontainer/requirements.txt && echo 'export PATH=$PATH:$HOME/.local/bin' >> ~/.bashrc",
+
   "customizations": {
     "vscode": {
-      "settings": {},
-      "extensions": ["ms-python.python"]
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker"
+      ]
     }
   },
-  "forwardPorts": [8080],
-  "remoteUser": "root"
+
+  "features": {},
+
+  "forwardPorts": [8080],  // Airflow UI default port
+
+  "remoteUser": "vscode"   // This ensures Codespaces uses the correct user
 }
