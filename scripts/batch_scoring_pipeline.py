@@ -96,6 +96,7 @@ def run_batch_scoring():
     pd.DataFrame([metadata]).to_csv("metadata/scoring_metadata.csv", index=False)
     results.to_csv('metadata/scoring_results.csv', index = False)
     logger.info("📝 Metadata saved to metadata/scoring_metadata.csv")
+    return None
 
 if __name__ == '__main__':
     run_batch_scoring()

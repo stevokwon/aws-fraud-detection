@@ -89,7 +89,7 @@ def cleanup_metadata():
 # Define DAG
 # ---------------------------
 with DAG(
-    dag_id = 'fraus_scoring_batch_pipeline',
+    dag_id = 'fraud_scoring_batch_pipeline',
     default_args = default_args,
     description = 'Run batch scoring on transactions then push results to S3',
     schedule = '@daily',
