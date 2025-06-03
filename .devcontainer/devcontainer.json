@@ -2,7 +2,7 @@
   "name": "AWS Fraud Detection Dev Container",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",  // Base image
 
-  "postCreateCommand": "pip install --upgrade pip && pip install -r .devcontainer/requirements.txt && echo 'export PATH=$PATH:$HOME/.local/bin' >> ~/.bashrc",
+  "postCreateCommand": "pip install --upgrade pip && pip install flask-session==0.3.2 && pip install apache-airflow==2.8.1 --no-deps && pip install -r .devcontainer/requirements.txt",
 
   "customizations": {
     "vscode": {

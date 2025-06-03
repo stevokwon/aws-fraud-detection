@@ -1,24 +1,23 @@
-# Core AWS & Airflow
+# Core Airflow + Providers
 apache-airflow==2.8.1
 apache-airflow-providers-amazon
 apache-airflow-providers-slack
 
-# AWS CLI / SDK
+# AWS CLI & SDK
 boto3
 awscli
 
-# Flask session support (for Airflow web UI)
-flask-session
+# Flask session fix for Airflow
+flask-session==0.3.2
 
-# ML / DS Libraries
+# ML/DS
 pandas
 scikit-learn
-xgboost==1.7.6
+xgboost==1.6.1
 lightgbm
-seaborn
 matplotlib
-imblearn
-
-# Misc
+seaborn
 kaggle
+
+# XML Signing (optional)
 xmlsec
