@@ -6,6 +6,7 @@ apache-airflow-providers-slack
 # AWS CLI & SDK
 boto3
 awscli
+botocore
 
 # Flask session fix for Airflow
 flask-session==0.3.2
