@@ -69,9 +69,17 @@ def is_fraud_rate_high():
 # Upload top-k flagged transactions
 # ---------------------------------
 def upload_top_k():
-    df = pd.read_csv('metadata/scoring_results.csv')
+    # Reading in local metadata file
+    dag_root = os.path.dirname(os.path.dirname(__file__))
+    local_path = os.path.join(dag_root, 'metadata', 'scoring_results.csv')
+    df = pd.read_csv(local_path)
+    
+    # Writing up to the resulting file
     df_top_k = df.sort_values('fraud_probability', ascending = False).head(100)
-    df_top_k.to_csv('metadata/top_k_flagged.csv')
+    local_result_path = os.path.join(dag_root, 'metadata', 'top_k_flagged.csv')
+    df_top_k.to_csv(local_result_path)
+    
+    # Uploading to aws s3
     s3 = boto3.client('s3')
     with open('metadata/top_k_flagged.csv', 'rb') as f:
         s3.upload_fileobj(f, 'fraud-batch-pipeline-stevo', 'review/top_k_flagged.csv')
