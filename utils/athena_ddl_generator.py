@@ -36,5 +36,8 @@ TBLPROPERTIES ('has_encrypted_data' = 'false');
 
 if __name__ == '__main__':
     ddl = generate_athena_ddl(
-        parquet_file_path=""
+        parquet_file_path="metadata/top_k_flagged.parquet",
+        table_name = 'fraud_top_k',
+        s3_location = 's3://fraud-batch-pipeline-stevo/review/'
     )
+    print(ddl)
