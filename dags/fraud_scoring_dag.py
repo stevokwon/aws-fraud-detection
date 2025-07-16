@@ -20,7 +20,6 @@ from airflow.utils.trigger_rule import TriggerRule
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 
 from batch_scoring_pipeline import run_batch_scoring
-from convert_top_k_to_parquet import convert_csv_to_parquet
 
 
 # ---------------------------
@@ -80,13 +79,13 @@ def upload_top_k():
 
     # Writing top K file
     df_top_k = df.sort_values('fraud_probability', ascending=False).head(100)
-    local_result_path = os.path.join(dag_root, 'metadata', 'top_k_flagged.csv')
-    df_top_k.to_csv(local_result_path, index=False)
+    local_result_path = os.path.join(dag_root, 'metadata', 'top_k_flagged.parquet')
+    df_top_k.to_parquet(local_result_path, index=False)
 
     # Uploading to AWS S3
     s3 = boto3.client('s3')
     with open(local_result_path, 'rb') as f:
-        s3.upload_fileobj(f, 'fraud-batch-pipeline-stevo', 'review/top_k_flagged.csv')
+        s3.upload_fileobj(f, 'fraud-batch-pipeline-stevo', 'review/top_k_flagged.parquet')
 
 # ---------------------------------
 # Cleanup the local metadata
@@ -153,20 +152,10 @@ top_k_upload = PythonOperator(
     dag=dag
 )
 
-convert_to_parquet = PythonOperator(
-    task_id='convert_top_k_to_parquet',
-    python_callable=convert_csv_to_parquet,
-    op_kwargs={
-        'csv_path': '/workspaces/aws-fraud-detection/metadata/top_k_flagged.csv',
-        'parquet_path': '/workspaces/aws-fraud-detection/metadata/top_k_flagged.parquet'
-    },
-    dag=dag
-)
-
 create_fraud_table = AthenaOperator(
     task_id="create_fraud_top_k_table",
     query=create_table_sql,
-    database="default",
+    database="fraud_scoring_db",
     output_location="s3://fraud-batch-pipeline-stevo/query-results/",
     aws_conn_id="aws_default",
     dag=dag,
@@ -175,7 +164,7 @@ create_fraud_table = AthenaOperator(
 query_fraud_data = AthenaOperator(
     task_id='query_fraud_data',
     query='SELECT * FROM fraud_top_k LIMIT 10;',
-    database='default',
+    database='fraud_scoring_db',
     output_location='s3://fraud-batch-pipeline-stevo/query-results/',
     aws_conn_id='aws_default',
     dag=dag
@@ -226,7 +215,7 @@ cleanup = PythonOperator(
 )
 
 # DAG workflow
-check_input >> run_batch >> top_k_upload >> convert_to_parquet >> create_fraud_table >> query_fraud_data >> fraud_alert_branch
+check_input >> run_batch >> top_k_upload >> create_fraud_table >> query_fraud_data >> fraud_alert_branch
 fraud_alert_branch >> [high_fraud_alert, no_alert_needed]
 
 high_fraud_alert >> [email_notify, slack_success]
