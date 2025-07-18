@@ -172,6 +172,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-data/raw/creditcard.csv
-data/processed/creditcard_clean.csv
+data
 metadata/
